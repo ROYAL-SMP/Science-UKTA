@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 9 Science Quiz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root{
+  --bg:#07070f;--surface:#0e0e1b;--card:#131320;--card2:#1a1a2a;
+  --border:#24243a;--accent:#7c5cfc;--a2:#fc5c7d;--a3:#5cf0c8;--a4:#fcb85c;
+  --text:#e8e8f4;--muted:#5e5e82;
+  --ok:#2dd36f;--bad:#eb445a;--glow:rgba(124,92,252,.2);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(124,92,252,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124,92,252,.025) 1px,transparent 1px);background-size:42px 42px;pointer-events:none;z-index:0;}
+.orb{position:fixed;pointer-events:none;z-index:0;border-radius:50%;}
+.orb1{top:-180px;right:-100px;width:620px;height:620px;background:radial-gradient(circle,rgba(124,92,252,.1) 0%,transparent 68%);animation:drift 9s ease-in-out infinite alternate;}
+.orb2{bottom:-160px;left:-80px;width:460px;height:460px;background:radial-gradient(circle,rgba(252,92,125,.07) 0%,transparent 65%);}
+@keyframes drift{from{transform:translate(0,0);}to{transform:translate(-26px,34px);}}
+
+/* ── AUTHOR pill ── */
+.author{position:fixed;top:14px;right:18px;z-index:200;display:flex;align-items:center;gap:8px;background:rgba(13,13,25,.92);border:1px solid var(--border);backdrop-filter:blur(14px);border-radius:50px;padding:6px 14px 6px 7px;transition:.3s;cursor:default;}
+.author:hover{border-color:var(--accent);box-shadow:0 0 18px var(--glow);}
+.av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+.an{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--text);display:block;line-height:1.3;}
+.ar{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;}
+/* ── UKTA watermark ── */
+.ukta{position:fixed;bottom:14px;right:18px;z-index:200;font-family:'Syne',sans-serif;font-size:11px;font-weight:800;color:var(--muted);opacity:.4;letter-spacing:3px;text-transform:uppercase;pointer-events:none;}
+
+/* ── LANG TOGGLE ── */
+.lang-toggle{position:fixed;top:14px;left:18px;z-index:200;display:flex;background:rgba(13,13,25,.92);border:1px solid var(--border);backdrop-filter:blur(14px);border-radius:50px;padding:4px;transition:.3s;}
+.lang-toggle:hover{border-color:var(--accent);}
+.lbtn{padding:5px 13px;border-radius:50px;border:none;background:transparent;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted);transition:.2s;}
+.lbtn.active{background:linear-gradient(135deg,var(--accent),var(--a2));color:#fff;box-shadow:0 2px 10px var(--glow);}
+
+/* ── APP ── */
+.app{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:20px 16px 80px;}
+
+/* ── HEADER ── */
+header{text-align:center;padding:58px 0 12px;}
+.badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(124,92,252,.13),rgba(252,92,125,.13));border:1px solid rgba(124,92,252,.27);color:var(--accent);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:5px 16px;border-radius:50px;margin-bottom:18px;}
+h1{font-family:'Syne',sans-serif;font-size:clamp(26px,5.5vw,50px);font-weight:800;line-height:1.06;background:linear-gradient(140deg,#fff 20%,var(--accent) 60%,var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:11px;}
+.tagline{color:var(--muted);font-size:13px;font-weight:300;letter-spacing:.3px;}
+
+/* ── SECTION LABEL ── */
+.sec-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:26px 0 13px;}
+
+/* ── CHAPTER GRID ── */
+.ch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:9px;margin-bottom:22px;}
+
+/* ALL CHAPTERS tile — same size as chapter tiles but highlighted */
+.all-tile{background:linear-gradient(135deg,rgba(124,92,252,.13),rgba(252,92,125,.13));border:1.5px dashed rgba(124,92,252,.4);border-radius:13px;padding:14px 12px;cursor:pointer;transition:.22s;text-align:left;position:relative;overflow:hidden;}
+.all-tile::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),var(--a2));opacity:0;transition:.22s;border-radius:12px;}
+.all-tile:hover::after,.all-tile.active::after{opacity:1;}
+.all-tile>*{position:relative;z-index:1;}
+.all-tile .at-title{font-family:'Syne',sans-serif;font-weight:800;font-size:12.5px;color:var(--accent);transition:.2s;line-height:1.3;}
+.all-tile:hover .at-title,.all-tile.active .at-title{color:#fff;}
+.all-tile .at-sub{font-size:10px;color:var(--muted);margin-top:3px;transition:.2s;}
+.all-tile:hover .at-sub,.all-tile.active .at-sub{color:rgba(255,255,255,.72);}
+.all-tile .at-icon{font-size:20px;margin-bottom:7px;display:block;}
+
+/* Chapter tiles */
+.ch-tile{background:var(--card);border:1.5px solid var(--border);border-radius:13px;padding:14px 12px;cursor:pointer;transition:.22s;text-align:left;position:relative;overflow:hidden;}
+.ch-tile::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--accent),var(--a2));opacity:0;transition:.22s;border-radius:12px;}
+.ch-tile:hover::after,.ch-tile.active::after{opacity:1;}
+.ch-tile>*{position:relative;z-index:1;}
+.ch-icon{font-size:20px;margin-bottom:7px;display:block;}
+.ch-name{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;line-height:1.35;color:var(--text);}
+.ch-num{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:3px;}
+.ch-tile:hover .ch-num,.ch-tile.active .ch-num{color:rgba(255,255,255,.6);}
+.ch-tile:hover .ch-name,.ch-tile.active .ch-name{color:#fff;}
+
+/* ── CONTROLS ── */
+.controls{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:18px;}
+.sel-wrap{position:relative;}
+select{background:var(--card);border:1.5px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 32px 10px 13px;border-radius:10px;appearance:none;cursor:pointer;outline:none;transition:border-color .2s;}
+select:focus{border-color:var(--accent);}
+.sel-wrap::after{content:'▾';position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:11px;}
+.btn-gen{background:linear-gradient(135deg,var(--accent),var(--a2));color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;padding:11px 24px;border:none;border-radius:10px;cursor:pointer;transition:.2s;box-shadow:0 4px 16px var(--glow);}
+.btn-gen:hover{transform:translateY(-2px);box-shadow:0 7px 24px var(--glow);}
+
+.tip{background:rgba(124,92,252,.07);border:1px solid rgba(124,92,252,.15);border-radius:11px;padding:11px 15px;font-size:12.5px;color:var(--muted);display:flex;gap:8px;}
+.err{background:rgba(235,68,90,.07);border:1px solid rgba(235,68,90,.2);border-radius:11px;padding:11px 15px;color:#ff8fa0;font-size:13px;margin-top:11px;display:none;line-height:1.6;}
+.divider{height:1px;background:var(--border);margin:20px 0;}
+
+/* ── API KEY SCREEN ── */
+#api-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;padding:20px;}
+.api-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:36px 32px;max-width:460px;width:100%;}
+.api-icon{font-size:40px;margin-bottom:16px;}
+.api-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px;}
+.api-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:24px;}
+.api-sub a{color:var(--accent);text-decoration:none;}
+.api-sub a:hover{text-decoration:underline;}
+.api-input-wrap{position:relative;margin-bottom:14px;}
+.api-input{width:100%;background:var(--surface);border:1.5px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:12px;padding:12px 44px 12px 14px;border-radius:11px;outline:none;transition:border-color .2s;letter-spacing:.5px;}
+.api-input:focus{border-color:var(--accent);}
+.api-input::placeholder{color:var(--muted);letter-spacing:0;}
+.api-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:4px;}
+.api-eye:hover{color:var(--text);}
+.btn-api{width:100%;background:linear-gradient(135deg,var(--accent),var(--a2));color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;padding:13px;border:none;border-radius:11px;cursor:pointer;transition:.2s;box-shadow:0 4px 16px var(--glow);margin-bottom:10px;}
+.btn-api:hover{transform:translateY(-2px);box-shadow:0 7px 22px var(--glow);}
+.api-note{font-size:11px;color:var(--muted);line-height:1.6;}
+.api-err{color:#ff8fa0;font-size:12px;margin-top:8px;display:none;}
+.api-saved{display:inline-flex;align-items:center;gap:6px;background:rgba(45,211,111,.1);border:1px solid rgba(45,211,111,.25);color:var(--ok);font-size:11px;font-family:'Space Mono',monospace;padding:4px 12px;border-radius:20px;margin-top:8px;display:none;}
+
+/* ── LOADING ── */
+#loading{display:none;text-align:center;padding:80px 20px;}
+.spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--accent);border-right-color:var(--a2);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 20px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.lt{color:var(--text);font-family:'Space Mono',monospace;font-size:12px;margin-bottom:5px;}
+.ls{color:var(--muted);font-family:'Space Mono',monospace;font-size:10px;}
+
+/* ── QUIZ ── */
+#quiz-area{display:none;}
+.prog-bar{height:3px;background:var(--border);border-radius:2px;margin-bottom:20px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--a2),var(--a3));border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.qmeta{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
+.qnum{font-family:'Space Mono',monospace;color:var(--accent);font-weight:700;font-size:12px;}
+.slive{display:flex;gap:13px;}
+.slive span{display:flex;align-items:center;gap:4px;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);}
+.dc{width:7px;height:7px;border-radius:50%;background:var(--ok);}
+.dw{width:7px;height:7px;border-radius:50%;background:var(--bad);}
+
+.qcard{background:var(--card);border:1.5px solid var(--border);border-radius:17px;padding:24px;margin-bottom:13px;position:relative;overflow:hidden;animation:su .3s cubic-bezier(.4,0,.2,1);}
+@keyframes su{from{opacity:0;transform:translateY(15px);}to{opacity:1;transform:translateY(0);}}
+.qcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--a2),var(--a3));}
+.qtag{display:inline-block;background:rgba(124,92,252,.11);border:1px solid rgba(124,92,252,.22);color:var(--accent);font-size:9px;font-family:'Space Mono',monospace;letter-spacing:2px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-bottom:13px;}
+.qtext{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;line-height:1.65;color:#fff;margin-bottom:18px;}
+
+.opts{display:grid;gap:8px;}
+.opt{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;cursor:pointer;transition:.15s;text-align:left;display:flex;align-items:center;gap:11px;font-size:13.5px;color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.5;}
+.ok{width:28px;height:28px;border-radius:7px;background:var(--border);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;flex-shrink:0;transition:.15s;color:var(--muted);}
+.opt:hover:not(:disabled){border-color:var(--accent);background:rgba(124,92,252,.07);}
+.opt:hover:not(:disabled) .ok{background:var(--accent);color:#fff;}
+.opt.correct{border-color:var(--ok);background:rgba(45,211,111,.07);animation:pop .36s ease;}
+.opt.correct .ok{background:var(--ok);color:#fff;}
+.opt.wrong{border-color:var(--bad);background:rgba(235,68,90,.07);animation:shake .36s ease;}
+.opt.wrong .ok{background:var(--bad);color:#fff;}
+.opt:disabled{cursor:default;}
+@keyframes pop{0%{transform:scale(1);}50%{transform:scale(1.012);}100%{transform:scale(1);}}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+
+.expl{display:none;margin-top:12px;padding:12px 15px;background:rgba(92,240,200,.05);border:1px solid rgba(92,240,200,.16);border-radius:10px;font-size:13px;line-height:1.8;color:#a8e4d4;animation:fd .28s ease;}
+.expl.show{display:block;}
+.expl strong{color:var(--a3);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;display:block;margin-bottom:5px;}
+@keyframes fd{from{opacity:0;}to{opacity:1;}}
+
+.btn-next{display:none;margin-top:13px;width:100%;background:var(--card2);border:1.5px solid var(--accent);color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;padding:13px;border-radius:11px;cursor:pointer;transition:.2s;}
+.btn-next:hover{background:var(--accent);color:#fff;box-shadow:0 4px 16px var(--glow);}
+.btn-next.show{display:block;animation:fd .28s ease;}
+
+/* ── RESULTS ── */
+#results{display:none;text-align:center;padding:38px 0;animation:su .45s ease;}
+.rring{width:148px;height:148px;margin:0 auto 22px;position:relative;}
+.rring svg{position:absolute;inset:0;transform:rotate(-90deg);}
+.rring-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.rpct{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#fff;}
+.rlbl{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:1px;}
+.rtitle{font-family:'Syne',sans-serif;font-size:25px;font-weight:800;margin-bottom:7px;}
+.rsub{color:var(--muted);font-size:13px;margin-bottom:25px;}
+.rstats{display:flex;justify-content:center;gap:11px;margin-bottom:28px;flex-wrap:wrap;}
+.sbox{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:14px 20px;min-width:84px;}
+.snum{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;}
+.snum.g{color:var(--ok);}.snum.r{color:var(--bad);}.snum.p{color:var(--accent);}
+.slb{font-size:9px;color:var(--muted);margin-top:3px;font-family:'Space Mono',monospace;letter-spacing:1px;}
+.btn-retry{background:linear-gradient(135deg,var(--accent),var(--a2));color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;padding:12px 27px;border:none;border-radius:11px;cursor:pointer;margin:0 5px 8px;transition:.2s;box-shadow:0 4px 15px var(--glow);}
+.btn-retry:hover{transform:translateY(-2px);}
+.btn-new{background:var(--card2);border:1.5px solid var(--border);color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;padding:12px 27px;border-radius:11px;cursor:pointer;margin:0 5px 8px;transition:.2s;}
+.btn-new:hover{border-color:var(--accent);color:var(--accent);}
+.rev-sec{margin-top:36px;text-align:left;}
+.rev-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;color:var(--muted);}
+.rev-item{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 15px;margin-bottom:9px;border-left:4px solid var(--border);}
+.rev-item.rc{border-left-color:var(--ok);}
+.rev-item.rw{border-left-color:var(--bad);}
+.rev-q{font-size:13px;font-weight:500;margin-bottom:6px;color:#e8e8f4;line-height:1.5;}
+.rev-a{font-size:12px;}
+.ca{color:var(--ok);font-weight:600;}.ya{color:var(--bad);}
+.re{color:var(--muted);font-size:11.5px;margin-top:4px;line-height:1.6;}
+
+@media(max-width:540px){
+  .ch-grid{grid-template-columns:repeat(2,1fr);}
+  header{padding:70px 0 10px;}
+  .lang-toggle{top:10px;left:10px;}
+  .author{top:10px;right:10px;}
+  .ukta{bottom:10px;right:10px;font-size:10px;}
+  h1{font-size:24px;}
+}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div><div class="orb orb2"></div>
+
+<!-- LANG TOGGLE -->
+<div class="lang-toggle">
+  <button class="lbtn active" id="b-en" onclick="setLang('en')">🇬🇧 EN</button>
+  <button class="lbtn" id="b-ne" onclick="setLang('ne')">🇳🇵 नेपाली</button>
+</div>
+
+<!-- AUTHOR pill -->
+<div class="author">
+  <div class="av">S</div>
+  <div><span class="an">Samarpan Aree</span><span class="ar">@creator ✨</span></div>
+</div>
+<!-- UKTA watermark -->
+<div class="ukta">UKTA</div>
+
+<div class="app">
+  <header>
+    <div class="badge" id="ui-badge">✦ SEE Final Exam Prep ✦</div>
+    <h1 id="ui-h1">Grade 9 Science<br>Quiz Master</h1>
+    <p class="tagline" id="ui-tag">AI-powered MCQs · Nepal CDC Curriculum · विज्ञान तथा प्राविधि</p>
+  </header>
+
+  <!-- API KEY SCREEN -->
+<div id="api-screen">
+  <div class="api-card">
+    <div class="api-icon">🔑</div>
+    <div class="api-title">Enter your API Key</div>
+    <div class="api-sub">
+      Paste your API key below to get started.<br>
+      Your key is saved only in your browser — never sent anywhere else.
+    </div>
+    <div class="api-input-wrap">
+      <input class="api-input" id="api-key-input" type="password" placeholder="AIzaSy..." spellcheck="false" />
+      <button class="api-eye" onclick="toggleEye()" id="eye-btn">👁️</button>
+    </div>
+    <button class="btn-api" onclick="saveKey()">Let's Go ⚡</button>
+    <div class="api-err" id="api-err">Please enter a valid API key</div>
+    <div class="api-note">Your key stays in your browser only.</div>
+  </div>
+</div>
+
+<div id="setup" style="display:none;">
+    <p class="sec-lbl" id="ui-lbl">📚 Select a chapter to start — or pick All Chapters for a full mixed test</p>
+
+    <div class="ch-grid" id="ch-grid"></div>
+
+    <div class="divider"></div>
+    <div class="controls">
+      <div class="sel-wrap">
+        <select id="num-q">
+          <option value="5">5 Questions</option>
+          <option value="10" selected>10 Questions</option>
+          <option value="15">15 Questions</option>
+          <option value="20">20 Questions</option>
+        </select>
+      </div>
+      <div class="sel-wrap">
+        <select id="diff">
+          <option value="mixed">Mixed Difficulty</option>
+          <option value="easy">Easy Only</option>
+          <option value="medium">Medium Only</option>
+          <option value="hard">Hard / SEE Level</option>
+        </select>
+      </div>
+      <button class="btn-gen" id="ui-gen" onclick="start()">⚡ Generate Quiz</button>
+    </div>
+    <div class="tip"><span>💡</span><span id="ui-tip">Select any chapter, choose number of questions, then hit Generate Quiz. AI makes fresh questions every time!</span></div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <div class="lt" id="lt">Generating questions...</div>
+    <div class="ls" id="ls">Crafting SEE-style MCQs</div>
+  </div>
+
+  <div id="quiz-area">
+    <div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
+    <div class="qmeta">
+      <span class="qnum" id="qctr">Q1 / 10</span>
+      <div class="slive">
+        <span><span class="dc"></span><span id="sc">0</span></span>
+        <span><span class="dw"></span><span id="sw">0</span></span>
+      </div>
+    </div>
+    <div class="qcard" id="qcard">
+      <div class="qtag" id="qtag"></div>
+      <div class="qtext" id="qtext"></div>
+      <div class="opts" id="opts"></div>
+      <div class="expl" id="expl"></div>
+    </div>
+    <button class="btn-next" id="btn-next" onclick="nextQ()">Next →</button>
+  </div>
+
+  <div id="results">
+    <div class="rring">
+      <svg viewBox="0 0 148 148" width="148" height="148">
+        <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#7c5cfc"/><stop offset="100%" stop-color="#fc5c7d"/>
+        </linearGradient></defs>
+        <circle cx="74" cy="74" r="64" fill="none" stroke="#24243a" stroke-width="9"/>
+        <circle cx="74" cy="74" r="64" fill="none" stroke="url(#rg)" stroke-width="9"
+          stroke-linecap="round" id="rring" stroke-dasharray="402.1" stroke-dashoffset="402.1"/>
+      </svg>
+      <div class="rring-in"><div class="rpct" id="rpct">0%</div><div class="rlbl" id="ui-score">SCORE</div></div>
+    </div>
+    <div class="rtitle" id="rtitle"></div>
+    <div class="rsub" id="rsub"></div>
+    <div class="rstats">
+      <div class="sbox"><div class="snum g" id="r-ok">0</div><div class="slb" id="ui-ok">CORRECT</div></div>
+      <div class="sbox"><div class="snum r" id="r-bad">0</div><div class="slb" id="ui-bad">WRONG</div></div>
+      <div class="sbox"><div class="snum p" id="r-tot">0</div><div class="slb" id="ui-tot">TOTAL</div></div>
+    </div>
+    <div>
+      <button class="btn-retry" id="ui-retry" onclick="retry()">🔄 Retry Same</button>
+      <button class="btn-new" id="ui-new" onclick="newQuiz()">📚 New Quiz</button>
+    </div>
+    <div class="rev-sec">
+      <div class="rev-title" id="ui-rev">📋 Full Answer Review</div>
+      <div id="rev-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─── EXACT CHAPTERS from Nepal CDC Grade 9 Science & Technology book ─── */
+const CHAPTERS = [
+  // ALL CHAPTERS special tile — id='ALL'
+  {id:'ALL', isAll:true,
+   icon:'🌐',
+   en:'All Chapters',          ne:'सबै अध्याय',
+   sub_en:'Mixed questions from every chapter', sub_ne:'सबै अध्यायबाट मिश्रित प्रश्नहरू'},
+
+  // Biology / Environment
+  {id:'ch1', icon:'🔭',
+   en:'Chapter 1 – Scientific Studies',       ne:'अध्याय १ – वैज्ञानिक अध्ययन',
+   sub_en:'Scientific learning, safety, notation, least count',
+   sub_ne:'वैज्ञानिक सिकाइ, सुरक्षा, वैज्ञानिक संकेत, न्यूनतम गणना'},
+
+  {id:'ch2', icon:'🌿',
+   en:'Chapter 2 – Classification of Organisms', ne:'अध्याय २ – जीवको वर्गीकरण',
+   sub_en:'Five-kingdom system, Monera, Protista, Fungi, nomenclature',
+   sub_ne:'पाँच जगत वर्गीकरण, मोनेरा, प्रोटिस्टा, ढुसी'},
+
+  {id:'ch3', icon:'🍄',
+   en:'Chapter 3 – Life Cycle of Mushroom',   ne:'अध्याय ३ – ढुसीको जीवनचक्र',
+   sub_en:'Mushroom structure, life cycle, farming, edible vs poisonous',
+   sub_ne:'ढुसीको संरचना, जीवनचक्र, खेती, खाद्य र विषालु ढुसी'},
+
+  {id:'ch4', icon:'🧬',
+   en:'Chapter 4 – Evolution',                ne:'अध्याय ४ – विकास',
+   sub_en:'Organic evolution, fossils, Lamarckism, Darwinism, mutation',
+   sub_ne:'जैव विकास, जीवाश्म, लामार्कवाद, डार्विनवाद, उत्परिवर्तन'},
+
+  {id:'ch5', icon:'🫀',
+   en:'Chapter 5 – Histology & Life Process', ne:'अध्याय ५ – ऊतकविज्ञान र जीवन प्रक्रिया',
+   sub_en:'Cell, tissues, nervous system, glands, plant hormones',
+   sub_ne:'कोश, ऊतक, स्नायु प्रणाली, ग्रन्थि, वनस्पति हर्मोन'},
+
+  {id:'ch6', icon:'🌍',
+   en:'Chapter 6 – Nature and Environment',   ne:'अध्याय ६ – प्रकृति र वातावरण',
+   sub_en:'Ecosystem, food chain, food web, biotic/abiotic, climate change',
+   sub_ne:'पारिस्थितिकी, खाद्य श्रृंखला, जैविक र अजैविक, जलवायु परिवर्तन'},
+
+  // Physics
+  {id:'ch7', icon:'🚀',
+   en:'Chapter 7 – Force and Motion',         ne:'अध्याय ७ – बल र गति',
+   sub_en:"Newton's laws, velocity, acceleration, equations of motion, momentum",
+   sub_ne:'न्युटनका नियम, वेग, त्वरण, गतिका समीकरण, संवेग'},
+
+  {id:'ch8', icon:'⚙️',
+   en:'Chapter 8 – Machine',                  ne:'अध्याय ८ – मेशिन',
+   sub_en:'Simple machines, MA, VR, efficiency, lever, pulley, inclined plane',
+   sub_ne:'सरल मेशिन, यान्त्रिक फाइदा, गति अनुपात, कार्यक्षमता'},
+
+  {id:'ch9', icon:'⚡',
+   en:'Chapter 9 – Work, Energy & Power',     ne:'अध्याय ९ – काम, ऊर्जा र शक्ति',
+   sub_en:'Work, kinetic energy, potential energy, conservation of energy, power',
+   sub_ne:'काम, गतिज ऊर्जा, स्थितिज ऊर्जा, ऊर्जा संरक्षण, शक्ति'},
+
+  {id:'ch10', icon:'🌡️',
+   en:'Chapter 10 – Heat',                    ne:'अध्याय १० – ताप',
+   sub_en:'Temperature, thermal expansion, calorimetry, specific heat capacity',
+   sub_ne:'तापक्रम, तापीय फैलावट, क्यालोरिमिट्री, विशिष्ट ताप'},
+
+  {id:'ch11', icon:'🔦',
+   en:'Chapter 11 – Light',                   ne:'अध्याय ११ – प्रकाश',
+   sub_en:'Reflection, refraction, lenses, mirrors, dispersion of light',
+   sub_ne:'परावर्तन, अपवर्तन, लेन्स, दर्पण, प्रकाशको विक्षेपण'},
+
+  {id:'ch12', icon:'🔊',
+   en:'Chapter 12 – Sound',                   ne:'अध्याय १२ – ध्वनि',
+   sub_en:'Sound waves, speed of sound, echo, frequency, pitch, loudness',
+   sub_ne:'ध्वनि तरंग, ध्वनिको गति, प्रतिध्वनि, आवृत्ति, तीव्रता'},
+
+  // Chemistry
+  {id:'ch13', icon:'💡',
+   en:'Chapter 13 – Electricity',             ne:'अध्याय १३ – विद्युत्',
+   sub_en:"Electric charge, Ohm's law, resistance, circuit, power, energy",
+   sub_ne:'विद्युत् चार्ज, ओमको नियम, अवरोध, परिपथ, शक्ति, ऊर्जा'},
+
+  {id:'ch14', icon:'🧲',
+   en:'Chapter 14 – Magnetism',               ne:'अध्याय १४ – चुम्बकत्व',
+   sub_en:'Magnetic field, electromagnet, electromagnetic induction',
+   sub_ne:'चुम्बकीय क्षेत्र, विद्युत्-चुम्बक, विद्युत्-चुम्बकीय प्रेरण'},
+
+  {id:'ch15', icon:'⚗️',
+   en:'Chapter 15 – Classification of Elements', ne:'अध्याय १५ – तत्त्वको वर्गीकरण',
+   sub_en:'Periodic table, valency, electronic configuration, metals & non-metals',
+   sub_ne:'आवर्त तालिका, संयोजकता, इलेक्ट्रोनिक विन्यास'},
+
+  {id:'ch16', icon:'🧪',
+   en:'Chapter 16 – Chemical Reactions',      ne:'अध्याय १६ – रासायनिक अभिक्रिया',
+   sub_en:'Types of reactions, balancing equations, acids, bases, salts',
+   sub_ne:'अभिक्रियाका प्रकार, समीकरण मिलाउन, अम्ल, क्षार, नुन'},
+
+  {id:'ch17', icon:'🛢️',
+   en:'Chapter 17 – Carbon Compounds',        ne:'अध्याय १७ – कार्बन यौगिक',
+   sub_en:'Organic chemistry, hydrocarbons, carbon bonding, common compounds',
+   sub_ne:'जैव रसायन, हाइड्रोकार्बन, कार्बनको बन्धन'},
+
+  // Geology & Astronomy
+  {id:'ch18', icon:'🪨',
+   en:'Chapter 18 – Rocks & Minerals',        ne:'अध्याय १८ – चट्टान र खनिज',
+   sub_en:'Types of rocks, rock cycle, minerals, soil formation',
+   sub_ne:'चट्टानका प्रकार, चट्टान चक्र, खनिज, माटोको निर्माण'},
+
+  {id:'ch19', icon:'🌏',
+   en:'Chapter 19 – Earth & Universe',        ne:'अध्याय १९ – पृथ्वी र ब्रह्माण्ड',
+   sub_en:'Solar system, stars, galaxies, earthquakes, volcanoes',
+   sub_ne:'सौर्यमण्डल, तारा, आकाशगंगा, भूकम्प, ज्वालामुखी'},
+];
+
+/* ─── LANGUAGE ─── */
+let lang = 'en';
+const L = {
+  en:{
+    badge:'✦ SEE Final Exam Prep ✦', h1:'Grade 9 Science<br>Quiz Master',
+    tag:'AI-powered MCQs · Nepal CDC Curriculum · विज्ञान तथा प्राविधि',
+    lbl:'📚 Select a chapter — or pick All Chapters for a full mixed test',
+    gen:'⚡ Generate Quiz', next:'Next →', seeRes:'See Results 🏆',
+    score:'SCORE', ok:'CORRECT', bad:'WRONG', tot:'TOTAL',
+    retry:'🔄 Retry Same', newq:'📚 New Quiz', rev:'📋 Full Answer Review',
+    tip:'Select any chapter below, choose number of questions, then hit Generate Quiz. AI creates fresh questions every time!',
+    errSel:'Please select a chapter first! 👆',
+    expl:'💡 EXPLANATION',
+    loading:['Generating questions...','Reading CDC curriculum...','Building explanations...','Almost ready...'],
+    loadSub:['Crafting SEE-style MCQs','Making exam-relevant questions','Adding hints to answers','Quality checking'],
+    grades:[[90,'🏆 Outstanding!','SEE-ready! Exceptional score!'],[75,'🎯 Great Work!','Solid — keep it up!'],[60,'👍 Good Job!','Review wrong answers and retry.'],[40,'📚 Keep Studying!','Go through the chapter again!'],[0,'💪 Don\'t Give Up!','Review and retry — you got this!']],
+  },
+  ne:{
+    badge:'✦ SEE अन्तिम परीक्षा तयारी ✦', h1:'कक्षा ९ विज्ञान<br>क्विज मास्टर',
+    tag:'AI-आधारित MCQ · नेपाल CDC पाठ्यक्रम · Science & Technology',
+    lbl:'📚 अध्याय छान्नुहोस् — वा सबै अध्याय मिश्रित परीक्षाका लागि All Chapters छान्नुहोस्',
+    gen:'⚡ क्विज बनाउनुहोस्', next:'अर्को →', seeRes:'नतिजा हेर्नुहोस् 🏆',
+    score:'स्कोर', ok:'सही', bad:'गलत', tot:'जम्मा',
+    retry:'🔄 फेरि प्रयास', newq:'📚 नयाँ क्विज', rev:'📋 सम्पूर्ण उत्तर समीक्षा',
+    tip:'तलबाट कुनै अध्याय छान्नुहोस्, प्रश्न संख्या छान्नुहोस् र क्विज बनाउनुहोस् थिच्नुहोस्। AI हरेकपटक नयाँ प्रश्न बनाउँछ!',
+    errSel:'पहिले अध्याय छान्नुहोस्! 👆',
+    expl:'💡 व्याख्या',
+    loading:['प्रश्नहरू बनाउँदै...','CDC पाठ्यक्रम हेर्दै...','व्याख्याहरू तयार गर्दै...','लगभग तयार...'],
+    loadSub:['SEE शैलीका MCQ बनाउँदै','परीक्षा उपयुक्त प्रश्नहरू','उत्तरमा संकेत राख्दै','गुणस्तर जाँच गर्दै'],
+    grades:[[90,'🏆 अद्भुत!','SEE का लागि तयार!'],[75,'🎯 राम्रो काम!','बलियो प्रदर्शन!'],[60,'👍 राम्रो!','गलत उत्तर समीक्षा गर्नुहोस्।'],[40,'📚 अझ पढ्नुहोस्!','अध्याय फेरि पढ्नुहोस्।'],[0,'💪 हार नमान्नुहोस्!','राम्रोसँग पढेर फेरि प्रयास गर्नुहोस्।']],
+  }
+};
+
+let sel=null, questions=[], curQ=0, okC=0, badC=0, answered=[];
+
+/* ─── LANG ─── */
+function setLang(l){
+  if(lang===l) return;
+  lang=l;
+  document.getElementById('b-en').classList.toggle('active',l==='en');
+  document.getElementById('b-ne').classList.toggle('active',l==='ne');
+  applyUI();
+  buildGrid();
+
+  // If quiz is currently active or results showing — regenerate in new lang
+  const quizVisible = document.getElementById('quiz-area').style.display==='block';
+  const resultsVisible = document.getElementById('results').style.display==='block';
+  const loadingVisible = document.getElementById('loading').style.display==='block';
+
+  if((quizVisible || resultsVisible) && sel && questions.length){
+    // Reset state and re-run quiz
+    const savedSel = sel;
+    const savedNumQ = questions.length;
+    const savedDiff = document.getElementById('diff').value;
+
+    // Hide everything, show loading
+    document.getElementById('quiz-area').style.display='none';
+    document.getElementById('results').style.display='none';
+    document.getElementById('rring').style.transition='none';
+    document.getElementById('rring').style.strokeDashoffset='402.1';
+
+    // Rebuild with same settings but new lang
+    questions=[];answered=[];curQ=0;okC=0;badC=0;
+    sel=savedSel;
+    // Temporarily patch the num-q select value
+    document.getElementById('num-q').value=savedNumQ;
+    start();
+  }
+}
+function t(k){return L[lang][k];}
+function applyUI(){
+  const s=L[lang];
+  document.querySelector('.badge').textContent=s.badge;
+  document.getElementById('ui-h1').innerHTML=s.h1;
+  document.getElementById('ui-tag').textContent=s.tag;
+  document.getElementById('ui-lbl').textContent=s.lbl;
+  document.getElementById('ui-gen').textContent=s.gen;
+  document.getElementById('ui-tip').textContent=s.tip;
+  document.getElementById('ui-score').textContent=s.score;
+  document.getElementById('ui-ok').textContent=s.ok;
+  document.getElementById('ui-bad').textContent=s.bad;
+  document.getElementById('ui-tot').textContent=s.tot;
+  document.getElementById('ui-retry').textContent=s.retry;
+  document.getElementById('ui-new').textContent=s.newq;
+  document.getElementById('ui-rev').textContent=s.rev;
+  const bn=document.getElementById('btn-next');
+  if(bn.classList.contains('show'))
+    bn.textContent=curQ<questions.length-1?s.next:s.seeRes;
+}
+
+/* ─── API KEY ─── */
+const DEFAULT_KEY = 'AIzaSyATFxVGJb6Rjt6aDJY5Dm92BXrnVVMTx84';
+let API_KEY = localStorage.getItem('ukta_api_key') || DEFAULT_KEY;
+
+function toggleEye(){
+  const inp=document.getElementById('api-key-input');
+  const btn=document.getElementById('eye-btn');
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
+  else{inp.type='password';btn.textContent='👁️';}
+}
+
+function saveKey(){
+  const val=document.getElementById('api-key-input').value.trim();
+  const errEl=document.getElementById('api-err');
+  if(!val || val.length < 10){errEl.style.display='block';return;}
+  errEl.style.display='none';
+  API_KEY=val;
+  localStorage.setItem('ukta_api_key',val);
+  document.getElementById('api-screen').style.display='none';
+  document.getElementById('setup').style.display='block';
+}
+
+function checkKey(){
+  if(API_KEY && API_KEY.length > 5){
+    document.getElementById('api-screen').style.display='none';
+    document.getElementById('setup').style.display='block';
+  }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  // Pre-fill input with default key
+  const inp=document.getElementById('api-key-input');
+  if(inp){
+    inp.value = API_KEY;
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter') saveKey();});
+  }
+  checkKey();
+});
+
+/* ─── BUILD GRID ─── */
+function buildGrid(){
+  const g=document.getElementById('ch-grid');
+  g.innerHTML='';
+  CHAPTERS.forEach(ch=>{
+    const div=document.createElement('div');
+    const isActive=sel===ch.id;
+    if(ch.isAll){
+      div.className='all-tile'+(isActive?' active':'');
+      div.innerHTML=`<span class="at-icon">${ch.icon}</span><div class="at-title">${lang==='ne'?ch.ne:ch.en}</div><div class="at-sub">${lang==='ne'?ch.sub_ne:ch.sub_en}</div>`;
+    } else {
+      div.className='ch-tile'+(isActive?' active':'');
+      const numPart=(lang==='ne'?ch.ne:ch.en).split('–')[0].trim();
+      const namePart=(lang==='ne'?ch.ne:ch.en).split('–').slice(1).join('–').trim();
+      div.innerHTML=`<span class="ch-icon">${ch.icon}</span><div class="ch-num">${numPart}</div><div class="ch-name">${namePart||ch.en}</div>`;
+    }
+    div.onclick=()=>pick(ch.id);
+    g.appendChild(div);
+  });
+}
+
+function pick(id){
+  sel=id;
+  document.querySelectorAll('.ch-tile,.all-tile').forEach((b,i)=>b.classList.toggle('active',CHAPTERS[i].id===id));
+  hideErr();
+}
+
+/* ─── PROMPT ─── */
+function buildPrompt(topicInfo,count,diff,offset,inNepali){
+  const dn={
+    mixed:'Vary: some easy recall, some medium application, some hard/numerical.',
+    easy:'All easy — basic recall and definitions.',
+    medium:'All medium — require understanding and application.',
+    hard:'All hard SEE level — numerical, critical thinking, analysis.'
+  }[diff];
+  const ln=inNepali
+    ?'Write ALL question text, all options, and explanation IN NEPALI LANGUAGE (Devanagari script).'
+    :'Write everything in English.';
+  return `You are a Grade 9 Science teacher for Nepal SEE exam preparation (CDC curriculum 2080 BS).
+
+Topic: ${topicInfo}
+${ln}
+Difficulty: ${dn}
+${offset>0?`Generate DIFFERENT questions from previous batch.`:''}
+
+RULES — follow exactly or app breaks:
+1. Return ONLY a JSON array. Zero text before or after. No markdown fences.
+2. Exactly ${count} objects.
+3. Options: plain text, NO "A)" "B)" prefixes.
+4. "answer": integer 0–3.
+5. Explanation: max 100 chars.
+
+Format: [{"q":"...","options":["...","...","...","..."],"answer":0,"explanation":"...","chapter":"..."}]
+
+Generate:`;
+}
+
+/* ─── PARSE ─── */
+function parse(raw){
+  let t=raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+  const si=t.indexOf('[');
+  if(si<0) return [];
+  t=t.slice(si);
+  try{return JSON.parse(t);}catch(e){}
+  const res=[];
+  let d=0,s=-1,str=false,esc=false;
+  for(let i=0;i<t.length;i++){
+    const c=t[i];
+    if(esc){esc=false;continue;}
+    if(c==='\\'&&str){esc=true;continue;}
+    if(c==='"'){str=!str;continue;}
+    if(str) continue;
+    if(c==='{'){if(d===0)s=i;d++;}
+    else if(c==='}'){
+      d--;
+      if(d===0&&s>=0){
+        try{const o=JSON.parse(t.slice(s,i+1));if(o.q&&Array.isArray(o.options)&&o.options.length>=2&&typeof o.answer==='number')res.push(o);}catch(e){}
+        s=-1;
+      }
+    }
+  }
+  return res;
+}
+
+/* ─── START ─── */
+async function start(){
+  if(!sel){showErr(t('errSel'));return;}
+  hideErr();
+  const numQ=parseInt(document.getElementById('num-q').value);
+  const diff=document.getElementById('diff').value;
+  const nep=lang==='ne';
+  const ch=CHAPTERS.find(c=>c.id===sel);
+
+  let topic;
+  if(sel==='ALL'){
+    topic=`ALL 19 chapters of Nepal CDC Grade 9 Science & Technology textbook: Ch1 Scientific Studies, Ch2 Classification of Organisms, Ch3 Life Cycle of Mushroom, Ch4 Evolution, Ch5 Histology & Life Process, Ch6 Nature & Environment, Ch7 Force & Motion, Ch8 Machine, Ch9 Work Energy Power, Ch10 Heat, Ch11 Light, Ch12 Sound, Ch13 Electricity, Ch14 Magnetism, Ch15 Classification of Elements, Ch16 Chemical Reactions, Ch17 Carbon Compounds, Ch18 Rocks & Minerals, Ch19 Earth & Universe. Spread questions evenly.`;
+  } else {
+    topic=`"${ch.en}" — ${ch.sub_en}`;
+  }
+
+  document.getElementById('setup').style.display='none';
+  document.getElementById('loading').style.display='block';
+  const lm=t('loading'),ls2=t('loadSub');
+  let mi=0;
+  const li=setInterval(()=>{
+    document.getElementById('lt').textContent=lm[mi%lm.length];
+    document.getElementById('ls').textContent=ls2[mi%ls2.length];
+    mi++;
+  },2000);
+
+  const BATCH=5; let allQ=[];
+  try{
+    for(let off=0;off<numQ;off+=BATCH){
+      const cnt=Math.min(BATCH,numQ-allQ.length);
+      if(cnt<=0) break;
+
+      const prompt=buildPrompt(topic,cnt,diff,off,nep);
+      let raw='';
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+        {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            contents:[{role:'user',parts:[{text:prompt}]}],
+            generationConfig:{temperature:0.8,maxOutputTokens:4000}
+          })
+        }
+      );
+      const data = await res.json();
+      if(data.error) throw new Error('API: '+data.error.message);
+      raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      if(!raw) throw new Error('Empty response. Try again.');
+      const p=parse(raw);
+      if(!p.length) throw new Error('Could not read questions. Try again.');
+      allQ=allQ.concat(p);
+      if(allQ.length>=numQ) break;
+    }
+    clearInterval(li);
+    questions=allQ.slice(0,numQ);
+    if(!questions.length) throw new Error('No questions generated.');
+    answered=Array(questions.length).fill(null);
+    curQ=0;okC=0;badC=0;
+    document.getElementById('loading').style.display='none';
+    document.getElementById('quiz-area').style.display='block';
+    renderQ();
+  }catch(e){
+    clearInterval(li);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('setup').style.display='block';
+    showErr('⚠️ '+e.message+' <span onclick="resetKey()" style="color:var(--accent);cursor:pointer;text-decoration:underline;margin-left:6px;">Change API Key</span>');
+  }
+}
+
+/* ─── RENDER Q ─── */
+function renderQ(){
+  const q=questions[curQ],tot=questions.length;
+  document.getElementById('prog').style.width=`${(curQ/tot)*100}%`;
+  document.getElementById('qctr').textContent=`Q${curQ+1} / ${tot}`;
+  document.getElementById('sc').textContent=okC;
+  document.getElementById('sw').textContent=badC;
+  document.getElementById('qtag').textContent=(q.chapter||'SCIENCE').toUpperCase();
+  document.getElementById('qtext').textContent=q.q;
+  const KEYS=['A','B','C','D'];
+  const od=document.getElementById('opts');
+  od.innerHTML='';
+  (q.options||[]).slice(0,4).forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML=`<span class="ok">${KEYS[i]}</span><span>${String(o).replace(/^[A-Da-d][\)\.\s]+/,'').trim()}</span>`;
+    btn.onclick=()=>pick2(i,btn);
+    od.appendChild(btn);
+  });
+  document.getElementById('expl').className='expl';
+  document.getElementById('expl').innerHTML='';
+  const bn=document.getElementById('btn-next');
+  bn.className='btn-next';
+  bn.textContent=curQ<questions.length-1?t('next'):t('seeRes');
+  const qc=document.getElementById('qcard');
+  qc.style.animation='none';void qc.offsetWidth;qc.style.animation='su .3s cubic-bezier(.4,0,.2,1)';
+}
+
+function pick2(idx,btn){
+  if(answered[curQ]!==null) return;
+  answered[curQ]=idx;
+  const q=questions[curQ];
+  const ca=typeof q.answer==='number'?q.answer:parseInt(q.answer)||0;
+  const btns=document.querySelectorAll('.opt');
+  btns.forEach(b=>b.disabled=true);
+  if(idx===ca){btn.classList.add('correct');okC++;}
+  else{btn.classList.add('wrong');if(btns[ca])btns[ca].classList.add('correct');badC++;}
+  document.getElementById('sc').textContent=okC;
+  document.getElementById('sw').textContent=badC;
+  const ex=document.getElementById('expl');
+  ex.innerHTML=`<strong>${t('expl')}</strong>${q.explanation||''}`;
+  ex.classList.add('show');
+  const bn=document.getElementById('btn-next');
+  bn.textContent=curQ<questions.length-1?t('next'):t('seeRes');
+  bn.classList.add('show');
+}
+
+function nextQ(){
+  curQ++;
+  if(curQ>=questions.length) showRes();
+  else renderQ();
+}
+
+/* ─── RESULTS ─── */
+function showRes(){
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('results').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  const pct=Math.round((okC/questions.length)*100);
+  document.getElementById('rpct').textContent=pct+'%';
+  document.getElementById('r-ok').textContent=okC;
+  document.getElementById('r-bad').textContent=badC;
+  document.getElementById('r-tot').textContent=questions.length;
+  document.getElementById('ui-ok').textContent=t('ok');
+  document.getElementById('ui-bad').textContent=t('bad');
+  document.getElementById('ui-tot').textContent=t('tot');
+  document.getElementById('ui-score').textContent=t('score');
+  document.getElementById('ui-retry').textContent=t('retry');
+  document.getElementById('ui-new').textContent=t('newq');
+  document.getElementById('ui-rev').textContent=t('rev');
+  const circ=402.1;
+  setTimeout(()=>{
+    const ring=document.getElementById('rring');
+    ring.style.transition='stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)';
+    ring.style.strokeDashoffset=circ-(circ*pct/100);
+  },100);
+  const grades=t('grades');
+  const[,title,sub]=grades.find(g=>pct>=g[0]);
+  const rt=document.getElementById('rtitle');
+  rt.textContent=title;
+  rt.style.color=['var(--ok)','var(--a3)','var(--a4)','var(--accent)','var(--bad)'][grades.findIndex(g=>pct>=g[0])];
+  document.getElementById('rsub').textContent=sub;
+  const KEYS=['A','B','C','D'];
+  const rl=document.getElementById('rev-list');
+  rl.innerHTML='';
+  questions.forEach((q,i)=>{
+    const ua=answered[i],ca=typeof q.answer==='number'?q.answer:parseInt(q.answer)||0,ok2=ua===ca;
+    const div=document.createElement('div');
+    div.className=`rev-item ${ok2?'rc':'rw'}`;
+    const co=(q.options[ca]||'').replace(/^[A-D][\)\.\s]+/,'').trim();
+    const uo=ua!==null?(q.options[ua]||'').replace(/^[A-D][\)\.\s]+/,'').trim():'—';
+    div.innerHTML=`<div class="rev-q">${ok2?'✅':'❌'} <strong>Q${i+1}:</strong> ${q.q}</div><div class="rev-a"><span class="ca">✓ ${KEYS[ca]}) ${co}</span>${!ok2?`<br><span class="ya">✗ ${ua!==null?KEYS[ua]+') '+uo:'—'}</span>`:''}</div><div class="re">💡 ${q.explanation||''}</div>`;
+    rl.appendChild(div);
+  });
+}
+
+function retry(){
+  answered=Array(questions.length).fill(null);
+  curQ=0;okC=0;badC=0;
+  document.getElementById('results').style.display='none';
+  const ring=document.getElementById('rring');
+  ring.style.transition='none';ring.style.strokeDashoffset='402.1';
+  document.getElementById('quiz-area').style.display='block';
+  renderQ();
+}
+function newQuiz(){
+  document.getElementById('results').style.display='none';
+  const ring=document.getElementById('rring');
+  ring.style.transition='none';ring.style.strokeDashoffset='402.1';
+  document.getElementById('setup').style.display='block';
+  questions=[];answered=[];curQ=0;okC=0;badC=0;sel=null;
+  window.scrollTo({top:0,behavior:'smooth'});
+  buildGrid();
+}
+function showErr(m){const e=document.getElementById('err');e.innerHTML=m;e.style.display='block';}
+function hideErr(){document.getElementById('err').style.display='none';}
+function resetKey(){
+  localStorage.removeItem('ukta_api_key');
+  API_KEY='';
+  document.getElementById('setup').style.display='none';
+  document.getElementById('err').style.display='none';
+  document.getElementById('api-screen').style.display='flex';
+  document.getElementById('api-key-input').value='';
+}
+
+// Init — checkKey() called in DOMContentLoaded above
+buildGrid(); applyUI();
+</script>
+</body>
+</html>
